@@ -23,13 +23,6 @@ func main() {
 	fmt.Println("Time taken:", end.Sub(start))
 }
 
-//	func listenToChan(ch chan int) {
-//		for {
-//			i := <-ch
-//			fmt.Println("Got", i, "from channel")
-//			time.Sleep(1 * time.Second)
-//		}
-//	}
 func verifyWhereToInvest() {
 	ifxiList, err := b3.GetB3IfixData()
 	if err != nil {
@@ -41,7 +34,6 @@ func verifyWhereToInvest() {
 	defer close(fundChan)
 	wg.Add(len(ifxiList))
 
-	// para cada item na lista consulta informação dele com web-scrapping
 	for _, b := range ifxiList {
 		go scrapperFundForIfix(b, &wg, fundChan)
 	}
@@ -49,13 +41,11 @@ func verifyWhereToInvest() {
 	var funds []cleandata.Fund
 	go func() {
 		for fund := range fundChan {
-			//->
 			funds = append(funds, fund)
 		}
 	}()
 	wg.Wait()
 	fmt.Println(funds)
-	// colocar as informações em um csv
 	fundsCsv.CreateCSVFromFunds(funds, "funds.csv")
 	fmt.Println("It is done")
 }
