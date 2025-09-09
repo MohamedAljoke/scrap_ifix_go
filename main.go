@@ -61,7 +61,8 @@ func scrapperFundForIfix(ifix b3.Asset, wg *sync.WaitGroup, ch chan cleandata.Fu
 	}
 	fund, err := generatedFund.CleanData(descountTax)
 	if err != nil {
-		log.Fatal("Error", err)
+		fmt.Printf("Skipping fund %s: %v\n", ifix.Code, err)
+		return
 	}
 	ch <- fund
 }

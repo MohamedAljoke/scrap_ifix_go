@@ -28,6 +28,16 @@ func (f *IfixFundData) CleanData(descountTax float64) (Fund, error) {
 	f.Price = strings.TrimSpace(f.Price)
 	f.Dividend = strings.TrimSpace(f.Dividend)
 
+	// Check for empty strings before parsing
+	if f.Dividend == "" {
+		fmt.Printf("Empty dividend for fund %s, skipping\n", f.Code)
+		return Fund{}, errors.New("empty dividend value")
+	}
+	if f.Price == "" {
+		fmt.Printf("Empty price for fund %s, skipping\n", f.Code)
+		return Fund{}, errors.New("empty price value")
+	}
+
 	dividendNumber, err := strconv.ParseFloat(f.Dividend, 64)
 	if err != nil {
 		fmt.Println("Error occured while parsing dividend", err)
