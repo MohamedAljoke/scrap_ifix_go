@@ -1,4 +1,4 @@
-package cleandata
+package cleanData
 
 import (
 	"io"
@@ -55,7 +55,7 @@ func Test_CleanData_PrintError(t *testing.T) {
 
 	_ = w.Close()
 	out, _ := io.ReadAll(r)
-	expectedErrorMsg := "Error occured while parsing dividend"
+	expectedErrorMsg := "Error occurred while parsing dividend"
 	if !strings.Contains(string(out), expectedErrorMsg) {
 		t.Errorf("intro text not correct got %s", string(out))
 	}
@@ -78,7 +78,7 @@ func Test_CleanData_PrintPriceError(t *testing.T) {
 
 	_ = w.Close()
 	out, _ := io.ReadAll(r)
-	expectedErrorMsg := "Error occured while parsing price"
+	expectedErrorMsg := "Error occurred while parsing price"
 	if !strings.Contains(string(out), expectedErrorMsg) {
 		t.Errorf("intro text not correct got %s", string(out))
 	}

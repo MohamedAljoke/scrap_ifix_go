@@ -3,11 +3,11 @@ package fundsCsv
 import (
 	"encoding/csv"
 	"os"
-	cleandata "scrap-ifix-go/cleanData"
+	"scrap-ifix-go/cleanData"
 	"strconv"
 )
 
-func CreateCSVFromFunds(funds []cleandata.Fund, filename string) error {
+func CreateCSVFromFunds(funds []cleanData.Fund, filename string) error {
 
 	file, err := os.Create(filename)
 	if err != nil {

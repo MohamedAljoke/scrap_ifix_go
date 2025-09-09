@@ -1,11 +1,12 @@
 package b3
 
 import (
+	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 )
 
 var url = "https://sistemaswebb3-listados.b3.com.br/indexProxy/indexCall/GetPortfolioDay/eyJsYW5ndWFnZSI6InB0LWJyIiwicGFnZU51bWJlciI6MSwicGFnZVNpemUiOjEyMCwiaW5kZXgiOiJJRklYIiwic2VnbWVudCI6IjEifQ=="
@@ -21,23 +22,39 @@ type Asset struct {
 }
 
 func GetB3IfixData() ([]Asset, error) {
-	resp, err := http.Get(url)
+	// Create HTTP client with timeout
+	client := &http.Client{
+		Timeout: 30 * time.Second,
+	}
+
+	// Create context with timeout
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	// Create request with context
+	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
-		fmt.Println("Error creating request:", err)
-		return nil, errors.New("error starting client")
+		return nil, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch B3 data: %w", err)
 	}
 	defer resp.Body.Close()
 
-	body, err := io.ReadAll(resp.Body)
-
-	if err != nil {
-		return nil, errors.New("error getting body")
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("B3 API returned status %d", resp.StatusCode)
 	}
-	var parsedResponse Response
 
-	err = json.Unmarshal(body, &parsedResponse)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, errors.New("body must have only a single JSON value")
+		return nil, fmt.Errorf("failed to read response body: %w", err)
+	}
+
+	var parsedResponse Response
+	if err := json.Unmarshal(body, &parsedResponse); err != nil {
+		return nil, fmt.Errorf("failed to parse JSON response: %w", err)
 	}
 
 	return parsedResponse.Results, nil

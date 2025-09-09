@@ -1,4 +1,4 @@
-package cleandata
+package cleanData
 
 import (
 	"errors"
@@ -20,7 +20,7 @@ type Fund struct {
 	MaxPrice float64
 }
 
-func (f *IfixFundData) CleanData(descountTax float64) (Fund, error) {
+func (f *IfixFundData) CleanData(discountTax float64) (Fund, error) {
 	f.Dividend = strings.ReplaceAll(f.Dividend, "%", "")
 	f.Dividend = strings.ReplaceAll(f.Dividend, ",", ".")
 	f.Price = strings.ReplaceAll(f.Price, "R$", "")
@@ -40,16 +40,16 @@ func (f *IfixFundData) CleanData(descountTax float64) (Fund, error) {
 
 	dividendNumber, err := strconv.ParseFloat(f.Dividend, 64)
 	if err != nil {
-		fmt.Println("Error occured while parsing dividend", err)
-		return Fund{}, errors.New("error occured while parsing dividend")
+		fmt.Println("Error occurred while parsing dividend", err)
+		return Fund{}, errors.New("error occurred while parsing dividend")
 	}
 	priceNumber, err := strconv.ParseFloat(f.Price, 64)
 	if err != nil {
-		fmt.Println("Error occured while parsing price", err)
-		return Fund{}, errors.New("error occured while parsing price")
+		fmt.Println("Error occurred while parsing price", err)
+		return Fund{}, errors.New("error occurred while parsing price")
 	}
 
-	maxPrice := dividendNumber / descountTax
+	maxPrice := dividendNumber / discountTax
 
 	fund := Fund{f.Code, f.Dividend, priceNumber, maxPrice}
 	return fund, nil

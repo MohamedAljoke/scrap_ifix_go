@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -72,9 +73,8 @@ func Test_B3_GetDataErrorBodyUnmarshal(t *testing.T) {
 	if err == nil {
 		t.Error("Expected non-nil error, got nil")
 	}
-	errorMessage := "body must have only a single JSON value"
-	if err.Error() != errorMessage {
-		t.Errorf("Expected error message to be %s got: %s", errorMessage, err.Error())
+	if !strings.Contains(err.Error(), "failed to parse JSON response") {
+		t.Errorf("Expected error to contain 'failed to parse JSON response', got: %s", err.Error())
 	}
 }
 
@@ -98,22 +98,17 @@ func Test_B3_GetDataErrorReadingResponse(t *testing.T) {
 	if err == nil {
 		t.Error("Expected non-nil error, got nil")
 	}
-	errorMessage := "error getting body"
-	if err.Error() != errorMessage {
-		t.Errorf("Expected error message to be %s got: %s", errorMessage, err.Error())
+	if !strings.Contains(err.Error(), "failed to read response body") {
+		t.Errorf("Expected error to contain 'failed to read response body', got: %s", err.Error())
 	}
 }
 
-func Test_B3_GetB3DataErrorCreatingRequest(t *testing.T) {
-	originalDefaultClient := http.DefaultClient
-
-	httpClient := &http.Client{
-		Transport: errorTransport{},
-	}
-	http.DefaultClient = httpClient
-	defer func() {
-		http.DefaultClient = originalDefaultClient
-	}()
+func Test_B3_GetB3DataErrorBadURL(t *testing.T) {
+	// Test with invalid URL to trigger network error
+	oldURL := url
+	url = "http://invalid-host-that-does-not-exist-123456789.com"
+	defer func() { url = oldURL }()
+	
 	result, err := GetB3IfixData()
 	if result != nil {
 		t.Errorf("Expected nil for result, got: %v", result)
@@ -121,9 +116,8 @@ func Test_B3_GetB3DataErrorCreatingRequest(t *testing.T) {
 	if err == nil {
 		t.Error("Expected non-nil error, got nil")
 	}
-	errorMessage := "error starting client"
-	if err.Error() != errorMessage {
-		t.Errorf("Expected error message to be %s got: %s", errorMessage, err.Error())
+	if !strings.Contains(err.Error(), "failed to fetch B3 data") {
+		t.Errorf("Expected error to contain 'failed to fetch B3 data', got: %s", err.Error())
 	}
 }
 

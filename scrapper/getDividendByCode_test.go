@@ -39,7 +39,11 @@ func Test_Scrapper_GetDividendSuccess(t *testing.T) {
 	fundsUrl = mockServer.URL
 
 	defer func() { fundsUrl = oldURL }()
-	dividend, price := GetDividendByCode("ABC11")
+	dividend, price, err := GetDividendByCode("ABC11")
+	if err != nil {
+		t.Fatalf("Expected no error, got: %v", err)
+	}
+	
 	expectedDividend := "16,32 %"
 	expectedPrice := "R$ 220,26"
 
