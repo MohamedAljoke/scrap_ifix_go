@@ -25,25 +25,7 @@ go test -cover ./...
 
 ## 📊 Fluxo da Aplicação
 
-```mermaid
-graph TD
-    A[main.go] --> B[b3.GetB3IfixData]
-    B --> C[API B3 - Lista IFIX]
-    C --> D[Lista de Fundos]
-    D --> E[Goroutines Paralelas]
-    E --> F[scrapper.GetDividendByCode]
-    F --> G[FundsExplorer - Scraping]
-    G --> H[cleanData.CleanData]
-    H --> I[Processamento de Dados]
-    I --> J[Cálculo de Métricas]
-    J --> K[Channel - Coleta de Resultados]
-    K --> L[fundsCsv.CreateCSVFromFunds]
-    L --> M[funds.csv]
-    
-    style A fill:#e1f5fe
-    style M fill:#c8e6c9
-    style E fill:#fff3e0
-```
+![main busca a lista do IFIX na API da B3, abre uma goroutine por fundo que faz o scraping no FundsExplorer e limpa os dados, e junta os resultados por um channel em funds.csv](docs/img/flow.svg)
 
 ## 🏗️ Arquitetura
 

@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 380" role="img" aria-label="main fetches the IFIX fund list from the B3 API, starts one goroutine per fund that scrapes FundsExplorer and cleans the data, and collects every result through one channel into funds.csv" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13">
+  <style>
+    .ink { fill: #1f2328; }
+    .quiet { fill: #59636e; font-size: 11.5px; }
+    .label { fill: #59636e; font-size: 11px; }
+    .edge { fill: none; stroke: #8c959f; stroke-width: 1.25; }
+    .head { fill: #8c959f; }
+    .node { fill: #0969da; fill-opacity: 0.12; stroke: #0969da; stroke-width: 2; }
+    .data { fill: #1a7f37; fill-opacity: 0.12; stroke: #1a7f37; stroke-width: 2; }
+    .queue { fill: #bf8700; fill-opacity: 0.12; stroke: #bf8700; stroke-width: 2; }
+    .b { font-weight: 600; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; }
+    @media (prefers-color-scheme: dark) {
+      .ink { fill: #e6edf3; }
+      .quiet, .label { fill: #9198a1; }
+      .edge { stroke: #6e7681; }
+      .head { fill: #6e7681; }
+      .node { fill: #4493f8; stroke: #4493f8; }
+      .data { fill: #3fb950; stroke: #3fb950; }
+      .queue { fill: #d29922; stroke: #d29922; }
+    }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path class="head" d="M0 0L10 5L0 10z"/>
+    </marker>
+  </defs>
+  <text class="ink b" x="24" y="34" font-size="15">Fan-out over goroutines, fan-in through one channel</text>
+
+  <rect class="edge" x="24" y="140" width="150" height="80" rx="8"/>
+  <text class="ink b" x="99" y="166" text-anchor="middle">B3 API</text>
+  <text class="quiet" x="99" y="188" text-anchor="middle">the IFIX fund list,</text>
+  <text class="quiet" x="99" y="204" text-anchor="middle">one HTTP request</text>
+
+  <path class="edge" d="M174 180H200V100H226" marker-end="url(#arrow)"/>
+  <path class="edge" d="M174 180H226" marker-end="url(#arrow)"/>
+  <path class="edge" d="M200 180V260H226" marker-end="url(#arrow)"/>
+
+  <rect class="edge" x="214" y="56" width="300" height="252" rx="8" stroke-dasharray="4 4"/>
+  <text class="quiet" x="228" y="74">one goroutine per fund</text>
+
+  <rect class="node" x="228" y="80" width="272" height="44" rx="8"/>
+  <text class="ink b mono" x="244" y="98">BRCO11</text>
+  <text class="quiet" x="244" y="114">scrape price and yield, then clean</text>
+  <rect class="node" x="228" y="158" width="272" height="44" rx="8"/>
+  <text class="ink b mono" x="244" y="176">HGLG11</text>
+  <text class="quiet" x="244" y="192">scrape price and yield, then clean</text>
+  <rect class="node" x="228" y="238" width="272" height="44" rx="8"/>
+  <text class="ink b mono" x="244" y="256">…</text>
+  <text class="quiet" x="244" y="272">every other fund, at the same time</text>
+
+  <path class="edge" d="M500 102H530V180H556" marker-end="url(#arrow)"/>
+  <path class="edge" d="M500 180H556" marker-end="url(#arrow)"/>
+  <path class="edge" d="M500 260H530V180" />
+
+  <rect class="queue" x="558" y="150" width="104" height="60" rx="8"/>
+  <text class="ink b mono" x="610" y="176" text-anchor="middle">chan Fund</text>
+  <text class="quiet" x="610" y="196" text-anchor="middle">one collector</text>
+
+  <path class="edge" d="M662 180H692" marker-end="url(#arrow)"/>
+  <rect class="data" x="694" y="150" width="102" height="60" rx="8"/>
+  <text class="ink b mono" x="745" y="176" text-anchor="middle">funds.csv</text>
+  <text class="quiet" x="745" y="196" text-anchor="middle">code, yield, prices</text>
+
+  <text class="label" x="364" y="326" text-anchor="middle">Colly visits fundsexplorer.com.br/funds/&lt;code&gt;; a failed fund is skipped, not fatal</text>
+  <text class="label" x="610" y="232" text-anchor="middle">closed by a WaitGroup</text>
+  <text class="label" x="610" y="246" text-anchor="middle">after the last worker</text>
+
+  <text class="quiet" x="24" y="364">go run main.go --sequential does the same work one fund at a time, to compare the run time.</text>
+</svg>
